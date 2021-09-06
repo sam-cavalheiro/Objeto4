@@ -1,14 +1,16 @@
 // Each #kernel tells which function to compile; you can have many kernels
 #pragma kernel CSMain
+#pragma kernel RandColor
 
 // Create a RenderTexture with enableRandomWrite flag and set it
 // with cs.SetTexture
 
 struct Fisica {
+    int indiceGameObject;
     float massa;
     float velocidade;
-
     float3 posicao;
+    float4 cor;
 };
 
 RWStructuredBuffer<Fisica> fisicas; 
@@ -25,7 +27,7 @@ float rand(float2 co) {
     return(frac(sin(dot(co.xy, float2(12.9898, 78.233))) * 43758.5453)) * 1;
 }
 
-[numthreads(10,1,1)]
+[numthreads(1,1,1)]
 void CSMain (uint3 id : SV_DispatchThreadID)
 {
     Fisica fisica = fisicas[id.x];
@@ -33,11 +35,19 @@ void CSMain (uint3 id : SV_DispatchThreadID)
     fisica.velocidade += (forca / fisica.massa) * deltaT;
     fisica.posicao.y -= fisica.velocidade * deltaT;
 
-    /*float _x = rand(float2(ultimoValorAleatorizado.x, fisica.massa));
-    float _y = rand(float2(ultimoValorAleatorizado.y,fisica.velocidade));
-    fisica.massa = minimoMaximoMassa.x + ((minimoMaximoMassa.y - minimoMaximoMassa.x) * _x);
-    fisica.velocidade = minimoMaximoVelocidade.x + ((minimoMaximoVelocidade.y - minimoMaximoVelocidade.x) * _y);
-    ultimoValorAleatorizado = float2(_x, _y);*/
+    fisicas[id.x] = fisica;
+}
+
+[numthreads(1,1,1)]
+void RandColor(uint id : SV_DispatchThreadID)
+{
+    Fisica fisica = fisicas[id.x];
+
+    float _r = rand(float2(fisica.cor.r, fisica.velocidade));
+    float _g = rand(float2(fisica.cor.g, fisica.massa));
+    float _b = rand(float2(fisica.cor.r, fisica.indiceGameObject));
+
+    fisica.cor = float4(_r, _g, _b, 1);
 
     fisicas[id.x] = fisica;
 }

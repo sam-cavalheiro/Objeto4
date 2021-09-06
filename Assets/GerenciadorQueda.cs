@@ -73,13 +73,16 @@ public class GerenciadorQueda : MonoBehaviour
 
             int indiceGo = fisicas[i].indiceGameObject;
             Vector3 _posicao = fisicas[i].posicao;
-            gameObjects[indiceGo].transform.position = _posicao;
+
             if (_posicao.y <= plano.position.y + 0.5f) // 0.5f é a metade da altura do cubo
             {
+                _posicao.y = plano.position.y + 0.5f;
                 gameObjects[indiceGo].GetComponent<MeshRenderer>().material.SetColor("_Color", Random.ColorHSV());
                 fisicas[i].indiceGameObject = -fisicas[i].indiceGameObject - 1;
                 repousoQuantia++;
             }
+
+            gameObjects[indiceGo].transform.position = _posicao;
         }
 
         LimpaRepousadosDaFisica(repousoQuantia);
@@ -103,12 +106,19 @@ public class GerenciadorQueda : MonoBehaviour
         for (int i = 0; i < fisicas.Length; i++)
         {
             Vector3 _posicao = fisicas[i].posicao;
-            gameObjects[fisicas[i].indiceGameObject].transform.position = _posicao;
+
             if (_posicao.y <= plano.position.y + 0.5f) // 0.5f é a metade da altura do cubo
             {
+                _posicao.y = plano.position.y + 0.5f;
+                gameObjects[fisicas[i].indiceGameObject].transform.position = _posicao;
                 fisicas[i].indiceGameObject = -fisicas[i].indiceGameObject - 1;
                 repousoQuantia++;
             }
+            else
+            {
+                gameObjects[fisicas[i].indiceGameObject].transform.position = _posicao;
+            }
+
         }
 
         computeBuffer.Dispose();
@@ -125,14 +135,7 @@ public class GerenciadorQueda : MonoBehaviour
             colorCb.GetData(emRepouso);
             for (int i = 0; i < emRepouso.Length; i++)
             {
-                try
-                {
-                    gameObjects[-emRepouso[i].indiceGameObject - 1].GetComponent<MeshRenderer>().material.SetColor("_Color", emRepouso[i].cor);
-                }
-                catch (Exception e)
-                {
-                    print("Erro: " + (-emRepouso[i].indiceGameObject).ToString());
-                }
+                gameObjects[-emRepouso[i].indiceGameObject - 1].GetComponent<MeshRenderer>().material.SetColor("_Color", emRepouso[i].cor);
             }
 
             colorCb.Dispose();

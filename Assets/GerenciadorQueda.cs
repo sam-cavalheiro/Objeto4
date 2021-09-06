@@ -23,8 +23,8 @@ public class GerenciadorQueda : MonoBehaviour
     ExecucaoFisica execucaoFisica;
     Transform plano;
 
-    [SerializeField] GameObject[] gameObjects = new GameObject[0];
-    [SerializeField] Fisica[] fisicas = new Fisica[0];
+    GameObject[] gameObjects = new GameObject[0];
+    Fisica[] fisicas = new Fisica[0];
 
     [System.Serializable]
     struct Fisica
